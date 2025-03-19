@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, ChangeEvent } from 'react';
-import { useLanguage } from '../../context/LanguageContext';
 import { FolderOpen, Brain } from 'lucide-react';
 import AMapLoader from '@amap/amap-jsapi-loader';
 
@@ -16,7 +15,6 @@ const ROAD_START = [119.649506, 29.089524]; // 起点坐标
 const ROAD_END = [119.669506, 29.089524];   // 终点坐标（向东5km）
 
 const DefectDetection: React.FC = () => {
-  const { language } = useLanguage();
   const [imagePairs, setImagePairs] = useState<ImagePair[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -37,11 +35,9 @@ const DefectDetection: React.FC = () => {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
-    // Get the folder path
     const folderPath = files[0].webkitRelativePath.split('/')[0];
     setSelectedFolder(folderPath);
 
-    // Group files by their directory
     const defFiles: File[] = [];
     const grayFiles: File[] = [];
 
@@ -54,11 +50,9 @@ const DefectDetection: React.FC = () => {
       }
     });
 
-    // Sort files by name to ensure matching pairs
     defFiles.sort((a, b) => a.name.localeCompare(b.name));
     grayFiles.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Create pairs of images
     const pairs: ImagePair[] = defFiles.map((defFile, index) => {
       const grayFile = grayFiles[index];
       if (!grayFile) return null;
@@ -79,19 +73,18 @@ const DefectDetection: React.FC = () => {
 
   const handleAnalyze = async () => {
     if (!selectedFolder) {
-      alert(language === 'zh' ? '请先选择文件夹' : 'Please select a folder first');
+      alert('请先选择文件夹');
       return;
     }
 
     setIsAnalyzing(true);
 
     try {
-      // TODO: Implement analysis logic
       await new Promise(resolve => setTimeout(resolve, 2000));
       setIsAnalyzing(false);
     } catch (error) {
-      console.error('Analysis failed:', error);
-      alert(language === 'zh' ? '分析失败' : 'Analysis failed');
+      console.error('分析失败:', error);
+      alert('分析失败');
       setIsAnalyzing(false);
     }
   };
@@ -112,7 +105,6 @@ const DefectDetection: React.FC = () => {
         map.addControl(new AMap.Scale());
         map.addControl(new AMap.ToolBar());
 
-        // Create the road path
         const polyline = new AMap.Polyline({
           path: [ROAD_START, ROAD_END],
           strokeColor: '#3B82F6',
@@ -126,7 +118,7 @@ const DefectDetection: React.FC = () => {
         mapInstance.current = map;
       }
     }).catch(e => {
-      console.error('Failed to load AMap:', e);
+      console.error('高德地图加载失败：', e);
     });
 
     return () => {
@@ -140,10 +132,8 @@ const DefectDetection: React.FC = () => {
   useEffect(() => {
     if (!mapInstance.current) return;
 
-    // Clear existing markers
     mapInstance.current.clearMap();
 
-    // Add road path
     const polyline = new window.AMap.Polyline({
       path: [ROAD_START, ROAD_END],
       strokeColor: '#3B82F6',
@@ -154,7 +144,6 @@ const DefectDetection: React.FC = () => {
     });
     mapInstance.current.add(polyline);
 
-    // Add markers for visible images
     imagePairs.slice(0, visibleImages).forEach((pair, index) => {
       const marker = new window.AMap.Marker({
         position: pair.location,
@@ -166,7 +155,6 @@ const DefectDetection: React.FC = () => {
         offset: new window.AMap.Pixel(-6, -6)
       });
 
-      // Make the current image's marker larger
       if (index === visibleImages - 1) {
         marker.setIcon(new window.AMap.Icon({
           size: new window.AMap.Size(16, 16),
@@ -182,11 +170,8 @@ const DefectDetection: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        {/* 右上角地图区域 */}
-        <div className="w-[400px] h-[200px] bg-gray-100 rounded-lg overflow-hidden">
-          <div ref={mapRef} className="w-full h-full" />
-        </div>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div ref={mapRef} className="w-full h-[200px] rounded-lg" />
       </div>
 
       <div className="flex gap-4">
@@ -204,7 +189,7 @@ const DefectDetection: React.FC = () => {
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >
           <FolderOpen className="w-5 h-5 mr-2" />
-          {language === 'zh' ? '打开文件夹' : 'Open Folder'}
+          打开文件夹
         </button>
         <button
           onClick={handleAnalyze}
@@ -216,14 +201,12 @@ const DefectDetection: React.FC = () => {
           }`}
         >
           <Brain className="w-5 h-5 mr-2" />
-          {isAnalyzing 
-            ? (language === 'zh' ? '分析中...' : 'Analyzing...')
-            : (language === 'zh' ? 'AI分析' : 'AI Analysis')}
+          {isAnalyzing ? '分析中...' : 'AI分析'}
         </button>
       </div>
 
       <div 
-        className="grid grid-cols-2 gap-4 h-[calc(100vh-400px)] overflow-y-auto"
+        className="grid grid-cols-2 gap-4 h-[calc(100vh-200px)] overflow-y-auto"
         onScroll={handleScroll}
       >
         <div className="space-y-0">
@@ -231,7 +214,7 @@ const DefectDetection: React.FC = () => {
             <div key={`def-${index}`} className="relative image-container">
               <img
                 src={pair.def}
-                alt={`Depth map ${index + 1}`}
+                alt={`深度图 ${index + 1}`}
                 className="w-full h-[300px] object-contain bg-gray-100"
                 style={{ display: 'block' }}
               />
@@ -246,7 +229,7 @@ const DefectDetection: React.FC = () => {
             <div key={`gray-${index}`} className="relative image-container">
               <img
                 src={pair.gray}
-                alt={`Grayscale image ${index + 1}`}
+                alt={`灰度图 ${index + 1}`}
                 className="w-full h-[300px] object-contain bg-gray-100"
                 style={{ display: 'block' }}
               />
@@ -258,9 +241,7 @@ const DefectDetection: React.FC = () => {
         </div>
         {imagePairs.length === 0 && (
           <div className="col-span-2 flex items-center justify-center h-64 bg-gray-100 rounded-lg">
-            <p className="text-gray-500">
-              {language === 'zh' ? '请选择包含 def 和 gray 文件夹的目录' : 'Please select a directory containing def and gray folders'}
-            </p>
+            <p className="text-gray-500">请选择包含 def 和 gray 文件夹的目录</p>
           </div>
         )}
       </div>
