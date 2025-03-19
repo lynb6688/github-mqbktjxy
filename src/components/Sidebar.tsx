@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader as Road2, Database, Car, ClipboardCheck, History, Library, LineChart, BarChart3, ChevronLeft, ChevronRight, Languages, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader as Road2, Database, Car, ClipboardCheck, History, Library, LineChart, BarChart3, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface SidebarProps {
@@ -10,8 +10,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, onPageChange, currentPage }) => {
-  const { t, language, setLanguage } = useLanguage();
-  const [isRoadConditionOpen, setIsRoadConditionOpen] = useState(false);
+  const { t } = useLanguage();
+  const [isRoadConditionOpen, setIsRoadConditionOpen] = useState(true);
 
   const menuItems = [
     { id: 'roadProfile', icon: Road2, label: t('roadProfile') },
@@ -22,9 +22,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, onPageChange, curr
       icon: ClipboardCheck,
       label: t('roadCondition'),
       subItems: [
-        { id: 'detection', label: language === 'zh' ? '病害检测' : 'Defect Detection' },
-        { id: 'results', label: language === 'zh' ? '检测结果' : 'Detection Results' },
-        { id: 'report', label: language === 'zh' ? '检测报表' : 'Detection Report' }
+        { id: 'detection', label: '病害检测' },
+        { id: 'results', label: '检测结果' },
+        { id: 'report', label: '检测报表' }
       ]
     },
     { id: 'maintenanceHistory', icon: History, label: t('maintenanceHistory') },
@@ -32,6 +32,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, onPageChange, curr
     { id: 'maintenanceEval', icon: LineChart, label: t('maintenanceEval') },
     { id: 'statistics', icon: BarChart3, label: t('statistics') },
   ];
+
+  const handleMenuClick = (itemId: string) => {
+    if (itemId === 'roadCondition') {
+      setIsRoadConditionOpen(!isRoadConditionOpen);
+      onPageChange('detection'); // 默认选中病害检测
+    } else {
+      onPageChange(itemId);
+    }
+  };
 
   return (
     <div
@@ -41,20 +50,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, onPageChange, curr
     >
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         <h1 className={`font-bold ${isOpen ? 'block' : 'hidden'}`}>{t('roadManagement')}</h1>
-        <div className="flex items-center">
-          <button
-            onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')}
-            className="p-2 mr-2 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <Languages size={20} />
-          </button>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-          </button>
-        </div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+        >
+          {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+        </button>
       </div>
 
       <nav className="mt-4">
@@ -64,13 +65,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, onPageChange, curr
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                if (item.id === 'roadCondition') {
-                  setIsRoadConditionOpen(!isRoadConditionOpen);
-                }
-                onPageChange(item.id);
+                handleMenuClick(item.id);
               }}
               className={`flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors ${
-                currentPage === item.id ? 'bg-gray-800 text-white' : ''
+                currentPage === item.id || (item.id === 'roadCondition' && currentPage === 'detection')
+                  ? 'bg-gray-800 text-white'
+                  : ''
               }`}
             >
               <div className="flex items-center">
