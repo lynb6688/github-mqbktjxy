@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import AMapLoader from '@amap/amap-jsapi-loader';
 import { useLanguage } from '../context/LanguageContext';
 import { Activity, AlertTriangle, BarChart, Car, Table, X } from 'lucide-react';
+import AMapLoader from '@amap/amap-jsapi-loader';
 
 // 模拟路面病害数据 - 在杭州区域范围内随机分布
 const roadDefects = [
@@ -62,7 +62,6 @@ interface DefectReportModalProps {
 }
 
 const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, onSubmit }) => {
-  const { language } = useLanguage();
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -77,9 +76,7 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800">
-            {language === 'zh' ? '路面病害报告' : 'Road Defect Report'}
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-800">路面病害报告</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -90,12 +87,9 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
 
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
-            {/* 病害信息 */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {language === 'zh' ? '病害类型' : 'Defect Type'}
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">病害类型</label>
                 <input
                   type="text"
                   value={defect.type}
@@ -104,9 +98,7 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {language === 'zh' ? '严重程度' : 'Severity'}
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">严重程度</label>
                 <input
                   type="text"
                   value={defect.severity}
@@ -115,9 +107,7 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {language === 'zh' ? '面积' : 'Area'}
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">面积</label>
                 <input
                   type="text"
                   value={defect.area}
@@ -126,9 +116,7 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {language === 'zh' ? '检查日期' : 'Inspection Date'}
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">检查日期</label>
                 <input
                   type="text"
                   value={defect.lastInspection}
@@ -139,9 +127,7 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {language === 'zh' ? '坐标' : 'Coordinates'}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">坐标</label>
               <input
                 type="text"
                 value={defect.position.join(', ')}
@@ -150,30 +136,24 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
               />
             </div>
 
-            {/* 联系电话 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {language === 'zh' ? '联系电话' : 'Phone Number'}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">联系电话</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder={language === 'zh' ? '请输入联系电话' : 'Enter phone number'}
+                placeholder="请输入联系电话"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 required
               />
             </div>
 
-            {/* 备注 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {language === 'zh' ? '备注' : 'Notes'}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">备注</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder={language === 'zh' ? '请输入备注信息' : 'Enter notes'}
+                placeholder="请输入备注信息"
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
               />
@@ -186,13 +166,13 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              {language === 'zh' ? '取消' : 'Cancel'}
+              取消
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
-              {language === 'zh' ? '发送' : 'Submit'}
+              发送
             </button>
           </div>
         </form>
@@ -202,7 +182,7 @@ const DefectReportModal: React.FC<DefectReportModalProps> = ({ defect, onClose, 
 };
 
 const RoadProfile: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const infoWindow = useRef<any>(null);
@@ -245,7 +225,6 @@ const RoadProfile: React.FC = () => {
 
         // 为每个病害点创建标记
         roadDefects.forEach((defect) => {
-          // 根据严重程度设置不同的颜色
           let markerColor = '#4ADE80'; // 轻微 - 绿色
           if (defect.severity === '中等') {
             markerColor = '#FBBF24'; // 中等 - 黄色
@@ -270,15 +249,15 @@ const RoadProfile: React.FC = () => {
             setHoveredDefect(defect.id);
             const content = `
               <div class="bg-white p-4 rounded-lg shadow-lg min-w-[200px]">
-                <h3 class="font-semibold text-gray-800 mb-2">${language === 'zh' ? '路面病害信息' : 'Road Defect Info'}</h3>
+                <h3 class="font-semibold text-gray-800 mb-2">路面病害信息</h3>
                 <div class="space-y-1">
-                  <p class="text-sm"><span class="text-gray-600">${language === 'zh' ? '病害类型' : 'Type'}:</span> ${defect.type}</p>
-                  <p class="text-sm"><span class="text-gray-600">${language === 'zh' ? '严重程度' : 'Severity'}:</span> 
+                  <p class="text-sm"><span class="text-gray-600">病害类型:</span> ${defect.type}</p>
+                  <p class="text-sm"><span class="text-gray-600">严重程度:</span> 
                     <span style="color: ${markerColor}">${defect.severity}</span>
                   </p>
-                  <p class="text-sm"><span class="text-gray-600">${language === 'zh' ? '病害面积' : 'Area'}:</span> ${defect.area}</p>
-                  <p class="text-sm"><span class="text-gray-600">${language === 'zh' ? '最近检查' : 'Last Inspection'}:</span> ${defect.lastInspection}</p>
-                  <p class="text-sm"><span class="text-gray-600">${language === 'zh' ? '坐标' : 'Coordinates'}:</span> ${defect.position.join(', ')}</p>
+                  <p class="text-sm"><span class="text-gray-600">病害面积:</span> ${defect.area}</p>
+                  <p class="text-sm"><span class="text-gray-600">最近检查:</span> ${defect.lastInspection}</p>
+                  <p class="text-sm"><span class="text-gray-600">坐标:</span> ${defect.position.join(', ')}</p>
                 </div>
               </div>
             `;
@@ -301,12 +280,10 @@ const RoadProfile: React.FC = () => {
         map.add(polyline);
         mapInstance.current = map;
 
-        // 添加地图鼠标移入事件
         map.on('mouseover', () => {
           setShowTable(true);
         });
 
-        // 添加地图鼠标移出事件
         map.on('mouseout', () => {
           if (!hoveredDefect) {
             setShowTable(false);
@@ -323,12 +300,11 @@ const RoadProfile: React.FC = () => {
         mapInstance.current = null;
       }
     };
-  }, [language, hoveredDefect]);
+  }, [hoveredDefect]);
 
   const handleReportSubmit = (phone: string, notes: string) => {
-    // 这里可以添加实际的提交逻辑
     console.log('Report submitted:', { defect: selectedDefect, phone, notes });
-    alert(language === 'zh' ? '发送成功！' : 'Report sent successfully!');
+    alert('发送成功！');
     setSelectedDefect(null);
   };
 
@@ -349,36 +325,23 @@ const RoadProfile: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-2">
           <div className="bg-white rounded-lg shadow-md p-6">
-            <div ref={mapRef} className="w-full h-[400px] rounded-lg" />
+            <div ref={mapRef} className="w-full h-[400px] rounded-lg" style={{ width: '100%' }} />
             
-            {/* 病害数据表格 */}
             <div className={`mt-4 overflow-hidden transition-all duration-300 ${showTable ? 'max-h-[500px]' : 'max-h-0'}`}>
               <div className="bg-white rounded-lg border border-gray-200">
                 <div className="flex items-center p-4 border-b border-gray-200">
                   <Table className="w-5 h-5 text-gray-500 mr-2" />
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {language === 'zh' ? '路面病害数据' : 'Road Defects Data'}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-800">路面病害数据</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="bg-gray-50">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                          {language === 'zh' ? '病害类型' : 'Type'}
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                          {language === 'zh' ? '严重程度' : 'Severity'}
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                          {language === 'zh' ? '面积' : 'Area'}
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                          {language === 'zh' ? '检查日期' : 'Inspection Date'}
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                          {language === 'zh' ? '坐标' : 'Coordinates'}
-                        </th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">病害类型</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">严重程度</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">面积</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">检查日期</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">坐标</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -393,9 +356,7 @@ const RoadProfile: React.FC = () => {
                           <td className="px-4 py-3 text-sm text-gray-800">{defect.severity}</td>
                           <td className="px-4 py-3 text-sm text-gray-800">{defect.area}</td>
                           <td className="px-4 py-3 text-sm text-gray-800">{defect.lastInspection}</td>
-                          <td className="px-4 py-3 text-sm text-gray-800">
-                            {defect.position.join(', ')}
-                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-800">{defect.position.join(', ')}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -408,68 +369,64 @@ const RoadProfile: React.FC = () => {
 
         <div className="space-y-6">
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">{t('roadDetails')}</h2>
+            <h2 className="text-xl font-semibold mb-4">道路详情</h2>
             <div className="space-y-3">
-              {renderIndicator(t('roadName'), 'G318', 'text-gray-800')}
-              {renderIndicator(t('roadLength'), '5.2 km', 'text-gray-800')}
-              {renderIndicator(t('roadType'), t('highway'), 'text-gray-800')}
-              {renderIndicator(t('lanes'), '4', 'text-gray-800')}
+              {renderIndicator('道路名称', 'G318', 'text-gray-800')}
+              {renderIndicator('长度', '5.2 km', 'text-gray-800')}
+              {renderIndicator('道路类型', '高速公路', 'text-gray-800')}
+              {renderIndicator('车道数', '4', 'text-gray-800')}
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Performance Indicators */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center mb-4">
             <Activity className="w-5 h-5 text-blue-500 mr-2" />
-            <h2 className="text-xl font-semibold">{t('performance')}</h2>
+            <h2 className="text-xl font-semibold">性能指标</h2>
           </div>
           <div className="space-y-3">
-            {renderIndicator(t('pci'), '92/100', 'text-green-600')}
-            {renderIndicator(t('rqi'), '88/100', 'text-green-600')}
-            {renderIndicator(t('pqi'), '90/100', 'text-green-600')}
+            {renderIndicator('PCI (路面状况指数)', '92/100', 'text-green-600')}
+            {renderIndicator('RQI (行驶质量指数)', '88/100', 'text-green-600')}
+            {renderIndicator('PQI (路面质量指数)', '90/100', 'text-green-600')}
           </div>
         </div>
 
-        {/* Maintenance */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center mb-4">
             <AlertTriangle className="w-5 h-5 text-orange-500 mr-2" />
-            <h2 className="text-xl font-semibold">{t('maintenance')}</h2>
+            <h2 className="text-xl font-semibold">养护情况</h2>
           </div>
           <div className="space-y-3">
-            {renderIndicator(t('maintenanceCost'), '¥250,000', 'text-gray-800')}
-            {renderIndicator(t('repairFrequency'), '2/year', 'text-gray-800')}
-            {renderIndicator(t('nextMaintenance'), '2024-05-15', 'text-blue-600')}
+            {renderIndicator('养护成本', '¥250,000', 'text-gray-800')}
+            {renderIndicator('维修频率', '2/year', 'text-gray-800')}
+            {renderIndicator('下次养护', '2024-05-15', 'text-blue-600')}
           </div>
         </div>
 
-        {/* Traffic Volume */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center mb-4">
             <Car className="w-5 h-5 text-green-500 mr-2" />
-            <h2 className="text-xl font-semibold">{t('trafficVolume')}</h2>
+            <h2 className="text-xl font-semibold">交通流量</h2>
           </div>
           <div className="space-y-3">
-            {renderIndicator(t('dailyTraffic'), '45,000', 'text-gray-800')}
-            {renderIndicator(t('peakHourVolume'), '3,200', 'text-gray-800')}
-            {renderIndicator(t('truckPercentage'), '15%', 'text-gray-800')}
+            {renderIndicator('日均交通量', '45,000', 'text-gray-800')}
+            {renderIndicator('高峰小时流量', '3,200', 'text-gray-800')}
+            {renderIndicator('货车比例', '15%', 'text-gray-800')}
           </div>
         </div>
 
-        {/* Specification Indicators */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center mb-4">
             <BarChart className="w-5 h-5 text-purple-500 mr-2" />
-            <h2 className="text-xl font-semibold">{t('specifications')}</h2>
+            <h2 className="text-xl font-semibold">技术指标</h2>
           </div>
           <div className="space-y-3">
-            {renderIndicator(t('rdi'), '95/100', 'text-green-600')}
-            {renderIndicator(t('sri'), '87/100', 'text-green-600')}
-            {renderIndicator(t('pssi'), '93/100', 'text-green-600')}
-            {renderIndicator(t('pwi'), '89/100', 'text-green-600')}
+            {renderIndicator('RDI (车辙深度指数)', '95/100', 'text-green-600')}
+            {renderIndicator('SRI (抗滑指数)', '87/100', 'text-green-600')}
+            {renderIndicator('PSSI (路面结构强度指数)', '93/100', 'text-green-600')}
+            {renderIndicator('PWI (路面宽度指数)', '89/100', 'text-green-600')}
           </div>
         </div>
       </div>
