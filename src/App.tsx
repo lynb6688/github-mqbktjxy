@@ -13,6 +13,9 @@ function App() {
     switch (currentPage) {
       case 'roadProfile':
         return <RoadProfile />;
+      case 'detection':
+      case 'results':
+      case 'report':
       case 'roadCondition':
         return <RoadCondition />;
       default:
