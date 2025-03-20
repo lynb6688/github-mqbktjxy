@@ -3,11 +3,11 @@ import { useLanguage } from '../context/LanguageContext';
 import { Activity, AlertTriangle, BarChart, Car, Table, X } from 'lucide-react';
 import AMapLoader from '@amap/amap-jsapi-loader';
 
-// 模拟路面病害数据 - 在杭州区域范围内随机分布
+// 更新路面病害数据点的位置
 const roadDefects = [
   {
     id: 1,
-    position: [119.649506, 29.089524],
+    position: [119.639894, 29.128941],
     type: '裂缝',
     severity: '轻微',
     area: '2.5m²',
@@ -15,7 +15,7 @@ const roadDefects = [
   },
   {
     id: 2,
-    position: [119.652506, 29.092524],
+    position: [119.641214, 29.129452],
     type: '坑洞',
     severity: '中等',
     area: '1.2m²',
@@ -23,7 +23,7 @@ const roadDefects = [
   },
   {
     id: 3,
-    position: [119.645506, 29.088524],
+    position: [119.642169, 29.129822],
     type: '车辙',
     severity: '严重',
     area: '5.0m²',
@@ -31,27 +31,11 @@ const roadDefects = [
   },
   {
     id: 4,
-    position: [119.648506, 29.085524],
+    position: [119.642764, 29.130038],
     type: '龟裂',
     severity: '中等',
     area: '3.8m²',
     lastInspection: '2024-03-12'
-  },
-  {
-    id: 5,
-    position: [119.651506, 29.087524],
-    type: '沉陷',
-    severity: '严重',
-    area: '4.2m²',
-    lastInspection: '2024-03-15'
-  },
-  {
-    id: 6,
-    position: [119.647506, 29.091524],
-    type: '松散',
-    severity: '轻微',
-    area: '1.8m²',
-    lastInspection: '2024-03-18'
   }
 ];
 
@@ -186,20 +170,20 @@ const RoadProfile: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const infoWindow = useRef<any>(null);
-  const [showTable, setShowTable] = useState(false);
   const [hoveredDefect, setHoveredDefect] = useState<number | null>(null);
   const [selectedDefect, setSelectedDefect] = useState<typeof roadDefects[0] | null>(null);
+  const markersRef = useRef<any[]>([]);
 
   useEffect(() => {
     AMapLoader.load({
       key: '1bf26ce046313c381a3f49e6ce15190a',
       version: '2.0',
-      plugins: ['AMap.PolyEditor', 'AMap.Scale', 'AMap.ToolBar', 'AMap.InfoWindow']
+      plugins: ['AMap.Scale', 'AMap.ToolBar', 'AMap.InfoWindow']
     }).then((AMap) => {
       if (mapRef.current && !mapInstance.current) {
         const map = new AMap.Map(mapRef.current, {
-          zoom: 14,
-          center: [119.649506, 29.089524],
+          zoom: 15,
+          center: [119.641214, 29.129452], // 更新地图中心点
           viewMode: '3D'
         });
 
@@ -223,6 +207,8 @@ const RoadProfile: React.FC = () => {
           strokeDasharray: [5, 5]
         });
 
+        map.add(polyline);
+
         // 为每个病害点创建标记
         roadDefects.forEach((defect) => {
           let markerColor = '#4ADE80'; // 轻微 - 绿色
@@ -245,7 +231,6 @@ const RoadProfile: React.FC = () => {
           });
 
           marker.on('mouseover', () => {
-            setShowTable(true);
             setHoveredDefect(defect.id);
             const content = `
               <div class="bg-white p-4 rounded-lg shadow-lg min-w-[200px]">
@@ -275,20 +260,10 @@ const RoadProfile: React.FC = () => {
           });
 
           map.add(marker);
+          markersRef.current.push(marker);
         });
 
-        map.add(polyline);
         mapInstance.current = map;
-
-        map.on('mouseover', () => {
-          setShowTable(true);
-        });
-
-        map.on('mouseout', () => {
-          if (!hoveredDefect) {
-            setShowTable(false);
-          }
-        });
       }
     }).catch(e => {
       console.error('高德地图加载失败：', e);
@@ -298,9 +273,10 @@ const RoadProfile: React.FC = () => {
       if (mapInstance.current) {
         mapInstance.current.destroy();
         mapInstance.current = null;
+        markersRef.current = [];
       }
     };
-  }, [hoveredDefect]);
+  }, []);
 
   const handleReportSubmit = (phone: string, notes: string) => {
     console.log('Report submitted:', { defect: selectedDefect, phone, notes });
@@ -327,7 +303,7 @@ const RoadProfile: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div ref={mapRef} className="w-full h-[400px] rounded-lg" style={{ width: '100%' }} />
             
-            <div className={`mt-4 overflow-hidden transition-all duration-300 ${showTable ? 'max-h-[500px]' : 'max-h-0'}`}>
+            <div className="mt-4">
               <div className="bg-white rounded-lg border border-gray-200">
                 <div className="flex items-center p-4 border-b border-gray-200">
                   <Table className="w-5 h-5 text-gray-500 mr-2" />
